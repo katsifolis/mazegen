@@ -18,11 +18,11 @@ func main() {
 	y, _ := strconv.Atoi(os.Args[2])
 
 	println(x, y)
-	// m := cell.InitMaze(x, y)
-	// for i := 0; i < x; i++ {
-	// 	for j := 0; j < y; j++ {
-	// 		fmt.Printf("%c ", m[i][j])
-	// 	}
-	// 	println("")
-	// }
+	m := cell.InitMaze(x, y)
+	for i := 0; i < x; i++ {
+		for j := 0; j < y; j++ {
+			fmt.Printf("%c ", m[i][j])
+		}
+		println("")
+	}
 }
