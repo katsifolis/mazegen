@@ -23,58 +23,26 @@ func backtracer(x, y int) {
 	m[rx][ry].Visited = true
 	initial := m[rx][ry]
 	s.Push(initial)
+
 	for s.Size() > 0 {
 		curr := s.Pop().(cell.Cell)
-		for i := 0; i < 4; i++ {
-			if curr.Wall[i] == false {
-				println("hello there")
-				s.Push(curr)
-				switch i {
-				case 0:
-					print("in")
-					if curr.Y-1 < 0 {
-						break
-					}
-					m[curr.X][curr.Y-1].Wall[i] = true
-					m[curr.X][curr.Y-1].Visited = true
-					curr = m[curr.X][curr.Y-1]
-					s.Push(curr)
-				case 1:
-					print("in")
-					if curr.Y+1 > y {
-						break
-					}
-					m[curr.X][curr.Y+1].Wall[i] = true
-					m[curr.X][curr.Y+1].Visited = true
-					curr = m[curr.X][curr.Y+1]
-					s.Push(curr)
-				case 2:
-					print("in")
-					if curr.X-1 < 0 {
-						break
-					}
-					m[curr.X-1][curr.Y].Wall[i] = true
-					m[curr.X-1][curr.Y].Visited = true
-					curr = m[curr.X-1][curr.Y]
-					s.Push(curr)
-				case 3:
-					print("in")
-					if curr.X+1 > x {
-						break
-					}
-					m[curr.X+1][curr.Y].Wall[i] = true
-					m[curr.X+1][curr.Y].Visited = true
-					curr = m[curr.X+1][curr.Y]
-					s.Push(curr)
-				}
-			}
-		}
+		print(curr.X)
+		print(" - ")
+		println(curr.Y)
+		cell.BoundCheck(x-1, y-1, &curr)
+		if 
+
 	}
 
 	for i := 0; i < x; i++ {
 		for j := 0; j < y; j++ {
+			if m[i][j].Visited == true {
+				print(".")
+			}
 		}
+		println()
 	}
+}
 
 }
 
@@ -102,8 +70,8 @@ func main() {
 	// x, _ := strconv.Atoi(os.Args[1])
 	// y, _ := strconv.Atoi(os.Args[2])
 
-	// x := 20
-	// y := 20
+	x := 4
+	y := 4
 
 	backtracer(x, y)
 
