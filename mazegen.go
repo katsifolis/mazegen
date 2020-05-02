@@ -2,79 +2,82 @@ package main
 
 import (
 	"math/rand"
+	"os"
+	"strconv"
 	"time"
-
-	"github.com/faiface/pixel"
-	"github.com/faiface/pixel/pixelgl"
-
-	"github.com/oxilgk/mazegen/cell"
-	"github.com/oxilgk/mazegen/stack"
 )
 
-func backtracer(x, y int) {
+var r rand.Source = rand.New(rand.NewSource(time.Now().Unix()))
+var n, s, e, w int = 1, 2, 4, 8
+var dx = map[int]int{e: 1, w: -1, n: 0, s: 0}
+var dy = map[int]int{e: 0, w: 0, n: -1, s: 1}
+var opposite = map[int]int{e: w, w: e, n: s, s: n}
 
-	r := rand.New(rand.NewSource(time.Now().Unix()))
-	rx := r.Int() % x
-	ry := r.Int() % y
+func ascii(matrix [][]int) {
 
-	m := cell.Maze(x, y)
-	s := stack.New()
-
-	m[rx][ry].Visited = true
-	initial := m[rx][ry]
-	s.Push(initial)
-
-	for s.Size() > 0 {
-		curr := s.Pop().(cell.Cell)
-		print(curr.X)
-		print(" - ")
-		println(curr.Y)
-		cell.BoundCheck(x-1, y-1, &curr)
-		if 
-
+	print(" ")
+	for z := 0; z < len(matrix[0])*2-1; z++ {
+		print("_")
 	}
 
-	for i := 0; i < x; i++ {
-		for j := 0; j < y; j++ {
-			if m[i][j].Visited == true {
-				print(".")
+	println()
+	for i := 0; i < len(matrix[0]); i++ {
+		print("|")
+		for j := 0; j < len(matrix); j++ {
+			if matrix[i][j]&s != 0 {
+				print(" ")
+			} else {
+				print("_")
+			}
+			if matrix[i][j]&e != 0 {
+				if (matrix[i][j]|matrix[i][j+1])&s != 0 {
+					print(" ")
+				} else {
+					print("_")
+				}
+			} else {
+				print("|")
 			}
 		}
 		println()
 	}
 }
 
-}
+func backtracer(cx, cy int, m [][]int) {
 
-func run() {
-	cfg := pixelgl.WindowConfig{
-		Title:  "Pixel Rocks!",
-		Bounds: pixel.R(0, 0, 1024, 768),
-		VSync:  true,
-	}
-	win, err := pixelgl.NewWindow(cfg)
-	if err != nil {
-		panic(err)
-	}
+	dir := []int{n, s, e, w}
+	rand.Shuffle(len(dir), func(i, j int) { dir[i], dir[j] = dir[j], dir[i] })
 
-	for !win.Closed() {
-		win.Update()
+	for _, direction := range dir {
+		nx := cx + dx[direction]
+		ny := cy + dy[direction]
+
+		if (ny >= 0 && ny < len(m)) && (nx >= 0 && nx < len(m[0])) && (m[ny][nx] == 0) {
+			m[cy][cx] |= direction
+			m[ny][nx] |= opposite[direction]
+			backtracer(nx, ny, m)
+		}
+
 	}
 }
 
 func main() {
-	// if len(os.Args) < 3 {
-	// 	println("Parameters not given")
-	// 	os.Exit(0)
-	// }
-	// x, _ := strconv.Atoi(os.Args[1])
-	// y, _ := strconv.Atoi(os.Args[2])
+	if len(os.Args) < 3 {
+		println("Parameters not given")
+		os.Exit(0)
+	}
+	x, _ := strconv.Atoi(os.Args[1])
+	y, _ := strconv.Atoi(os.Args[2])
 
-	x := 4
-	y := 4
+	rand.Seed(time.Now().UTC().UnixNano())
+	matrix := make([][]int, y)
+	for i := 0; i < y; i++ {
+		matrix[i] = make([]int, x)
+	}
 
-	backtracer(x, y)
+	backtracer(0, 0, matrix)
 
-	// pixelgl.Run(run)
+	ascii(matrix)
+	println()
 
 }
